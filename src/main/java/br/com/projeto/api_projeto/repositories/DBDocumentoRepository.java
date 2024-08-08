@@ -1,21 +1,26 @@
 package br.com.projeto.api_projeto.repositories;
 
 import br.com.projeto.api_projeto.models.Documento;
-import br.com.projeto.api_projeto.models.Evento;
+import br.com.projeto.api_projeto.models.DocumentoUsuario;
+import org.apache.tomcat.util.http.fileupload.InvalidFileNameException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.util.List;
+import java.io.IOException;
+import java.nio.file.FileAlreadyExistsException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 @Repository
 public class DBDocumentoRepository implements DocumentoRepository {
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
-
 //    @Override
 //    public int salvar(Evento evento) {
 //        return jdbcTemplate.update("INSERT INTO evento (evento_data, evento_link, evento_data_criacao, evento_id_usuario_criacao, evento_linkepublico, evento_nome, evento_vagas) VALUES(?,?,?,?,?,?,?)",
@@ -37,6 +42,20 @@ public class DBDocumentoRepository implements DocumentoRepository {
         } catch (IncorrectResultSizeDataAccessException e) {
             return null;
         }
+    }
+
+    @Override
+    public DocumentoUsuario entregarDocumento(String nomeArquivo, int documentoUsuarioId) {
+
+        jdbcTemplate.update("UPDATE `usuario_r_documento` SET entregue=1,anexo_Nome=?,anexo_Data=NOW() WHERE id=?", nomeArquivo, documentoUsuarioId);
+        return null;
+    }
+
+    @Override
+    public DocumentoUsuario removerDocumento(int documentoUsuarioId) {
+
+        jdbcTemplate.update("UPDATE `usuario_r_documento` SET entregue=0,anexo_Nome='',anexo_Data=NULL WHERE id=?", documentoUsuarioId);
+        return null;
     }
 
 //    @Override

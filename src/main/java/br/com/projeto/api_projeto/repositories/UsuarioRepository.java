@@ -24,6 +24,7 @@ public interface UsuarioRepository {
     Usuario buscarUsuario(String email, String cpf, String matricula);
 
     List<EventosUsuario> buscarEventosUsuarios(int idUsuario);
+    EventosUsuario buscarEventoUsuario(int idEventoUsuario, int usuarioId);
 
     int inscreverEvento(int eventoId, int usuarioId);
 

@@ -1,18 +1,15 @@
 package br.com.projeto.api_projeto.controller;
 
 import br.com.projeto.api_projeto.models.Documento;
-import br.com.projeto.api_projeto.models.Evento;
 import br.com.projeto.api_projeto.repositories.DocumentoRepository;
+import br.com.projeto.api_projeto.services.FileServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import javax.print.Doc;
-import java.awt.*;
-import java.util.Date;
-import java.util.List;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/documentos")
@@ -21,10 +18,53 @@ public class DocumentoController {
     @Autowired
     DocumentoRepository documentoRepository;
 
+    @Autowired
+    FileServiceImpl fileServiceImpl;
+
     @GetMapping("/buscar")
     public ResponseEntity<Documento> buscarPorId(@RequestHeader("id") int id){
         Documento result = documentoRepository.buscarPorId(id);
         return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
+//    @PostMapping("/upload")
+//    public DocumentoUsuario upload(@RequestParam MultipartFile file, @RequestHeader("id") int id) throws IOException {
+//        return documentoRepository.upload(file, id);
+//    }
+
+    @PostMapping("/upload")
+    public ResponseEntity<String> uploadFile(@RequestParam MultipartFile file, @RequestHeader("id") int idDocumentoUsuario) {
+        String message = "";
+        try {
+            boolean up = fileServiceImpl.upload(file);
+
+            if (up) {
+                documentoRepository.entregarDocumento(file.getOriginalFilename(), idDocumentoUsuario);
+            }
+            message = "Upload com sucesso: " + file.getOriginalFilename();
+            return ResponseEntity.status(HttpStatus.OK).body(message);
+        } catch (Exception e) {
+            message = "Não foi possivel realizar o upload do arquivo: " + file.getOriginalFilename() + ". Error: " + e.getMessage();
+            return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(message);
+        }
+    }
+
+    @GetMapping("/download/{filename:.+}")
+    @ResponseBody
+    public ResponseEntity<Resource> getFile(@PathVariable String filename) {
+        Resource file = fileServiceImpl.download(filename);
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + file.getFilename() + "\"").body(file);
+    }
+
+    @GetMapping("/delete")
+    @ResponseBody
+    public ResponseEntity<String> deleteFile(@RequestHeader("idDocumentoUsuario") int idDocumentoUsuario, @RequestHeader("nomeAnexo") String nomeAnexo) {
+        boolean retorno = fileServiceImpl.delete(nomeAnexo);
+        if (retorno) {
+            documentoRepository.removerDocumento(idDocumentoUsuario);
+        }
+        return ResponseEntity.status(HttpStatus.OK).body("Deletado com sucesso: " + nomeAnexo);
     }
 //
 //    @GetMapping(value = "/listar", produces = MediaType.APPLICATION_JSON_VALUE)

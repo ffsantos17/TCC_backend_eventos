@@ -1,7 +1,5 @@
 package br.com.projeto.api_projeto.models;
 
-import jdk.jfr.Event;
-
 import java.util.List;
 
 public class EventosUsuario {
@@ -11,7 +9,7 @@ public class EventosUsuario {
     private int idEvento;
     private String status;
     private Evento evento;
-    private List<DocumentosUsuario> documentos;
+    private List<DocumentoUsuario> documentos;
 
     public EventosUsuario() {}
 
@@ -69,11 +67,11 @@ public class EventosUsuario {
         this.evento = evento;
     }
 
-    public List<DocumentosUsuario> getDocumentos() {
+    public List<DocumentoUsuario> getDocumentos() {
         return documentos;
     }
 
-    public void setDocumentos(List<DocumentosUsuario> documentos) {
+    public void setDocumentos(List<DocumentoUsuario> documentos) {
         this.documentos = documentos;
     }
 }

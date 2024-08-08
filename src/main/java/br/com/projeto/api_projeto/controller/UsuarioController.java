@@ -1,4 +1,5 @@
 package br.com.projeto.api_projeto.controller;
+import br.com.projeto.api_projeto.models.EventosUsuario;
 import br.com.projeto.api_projeto.models.Usuario;
 import br.com.projeto.api_projeto.repositories.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -6,6 +7,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.Authentication;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -66,6 +69,19 @@ public class UsuarioController {
             return new ResponseEntity<>(String.valueOf(response), HttpStatus.OK);
         }else {
             return new ResponseEntity<>("erro", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping(value ="/buscar-evento-usuario", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<EventosUsuario> buscarEventoUsuario(@RequestHeader("eventoUsuarioId") int eventoUsuarioId){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Usuario usuario = (Usuario) authentication.getPrincipal();
+        EventosUsuario response = usuarioRepository.buscarEventoUsuario(eventoUsuarioId, usuario.getId());
+        if(response == null){
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+
+        }else {
+            return new ResponseEntity<>(response, HttpStatus.OK);
         }
     }
 

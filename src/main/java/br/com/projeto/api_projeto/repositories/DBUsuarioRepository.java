@@ -7,10 +7,8 @@ import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Repository;
 
-import javax.print.Doc;
 import java.sql.PreparedStatement;
 import java.sql.Statement;
 import java.util.List;
@@ -97,11 +95,25 @@ public class DBUsuarioRepository implements UsuarioRepository {
             return null;
         }
     }
-
-    public List<DocumentosUsuario> buscarDocumentosUsuarios(int idEventoUsuario) {
+    public EventosUsuario buscarEventoUsuario(int idEventoUsuario, int usuarioId) {
         try {
-            List<DocumentosUsuario> documentos = jdbcTemplate.query("SELECT userDoc.id, userDoc.evento_r_usuario_id as idEventoUsuario, doc.documento_id as idDocumento, userDoc.entregue as entregue FROM `usuario_r_documento` as userDoc LEFT JOIN evento_r_documento as eveDoc ON eveDoc.evento_r_documento_id=userDoc.evento_r_documento_id LEFT JOIN documento as doc ON doc.documento_id=eveDoc.documento_id WHERE evento_r_usuario_id=?;",
-                    BeanPropertyRowMapper.newInstance(DocumentosUsuario.class), idEventoUsuario);
+            EventosUsuario evento = jdbcTemplate.queryForObject("SELECT evento_r_usuario_id as id, evento_id as idEvento, usuario_id as idUsuario, status as status FROM `evento_r_usuario` WHERE evento_r_usuario_id=? and usuario_id = ?",
+                    BeanPropertyRowMapper.newInstance(EventosUsuario.class), idEventoUsuario, usuarioId);
+            if(evento != null) {
+                evento.setEvento(eventoRepository.buscarPorId(evento.getIdEvento()));
+                evento.setDocumentos(buscarDocumentosUsuarios(evento.getId()));
+            }
+
+            return evento;
+        } catch (IncorrectResultSizeDataAccessException e) {
+            return null;
+        }
+    }
+
+    public List<DocumentoUsuario> buscarDocumentosUsuarios(int idEventoUsuario) {
+        try {
+            List<DocumentoUsuario> documentos = jdbcTemplate.query("SELECT userDoc.id, userDoc.evento_r_usuario_id as idEventoUsuario, doc.documento_id as idDocumento, userDoc.entregue as entregue, anexo_Nome as nomeAnexo FROM `usuario_r_documento` as userDoc LEFT JOIN evento_r_documento as eveDoc ON eveDoc.evento_r_documento_id=userDoc.evento_r_documento_id LEFT JOIN documento as doc ON doc.documento_id=eveDoc.documento_id WHERE evento_r_usuario_id=?;",
+                    BeanPropertyRowMapper.newInstance(DocumentoUsuario.class), idEventoUsuario);
             documentos.forEach(d ->{
                 d.setDocumento(documentoRepository.buscarPorId(d.getIdDocumento()));
             });

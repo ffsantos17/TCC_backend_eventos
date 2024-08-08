@@ -1,30 +1,31 @@
 package br.com.projeto.api_projeto.models;
 
-import javax.print.Doc;
-
-public class DocumentosUsuario {
+public class DocumentoUsuario {
 
     private int id;
     private int idEventoUsuario;
     private int idDocumento;
     private Documento documento;
     private boolean entregue;
+    private String nomeAnexo;
 
-    public DocumentosUsuario() {}
+    public DocumentoUsuario() {}
 
-    public DocumentosUsuario(int id, int idEventoUsuario, int idDocumento, boolean entregue) {
+    public DocumentoUsuario(int id, int idEventoUsuario, int idDocumento, boolean entregue, String nomeAnexo) {
         this.id = id;
         this.idEventoUsuario = idEventoUsuario;
         this.idDocumento = idDocumento;
         this.entregue = entregue;
+        this.nomeAnexo = nomeAnexo;
     }
 
-    public DocumentosUsuario(int id, int idEventoUsuario, int idDocumento, boolean entregue, Documento documento) {
+    public DocumentoUsuario(int id, int idEventoUsuario, int idDocumento, boolean entregue, Documento documento, String nomeAnexo) {
         this.id = id;
         this.idEventoUsuario = idEventoUsuario;
         this.idDocumento = idDocumento;
         this.entregue = entregue;
         this.documento = documento;
+        this.nomeAnexo = nomeAnexo;
     }
 
     public int getId() {
@@ -65,5 +66,13 @@ public class DocumentosUsuario {
 
     public void setEntregue(boolean entregue) {
         this.entregue = entregue;
+    }
+
+    public String getNomeAnexo() {
+        return nomeAnexo;
+    }
+
+    public void setNomeAnexo(String nomeAnexo) {
+        this.nomeAnexo = nomeAnexo;
     }
 }
