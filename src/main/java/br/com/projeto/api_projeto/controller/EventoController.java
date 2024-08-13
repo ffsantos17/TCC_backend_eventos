@@ -1,10 +1,8 @@
 package br.com.projeto.api_projeto.controller;
 
 import br.com.projeto.api_projeto.models.Evento;
-import br.com.projeto.api_projeto.models.Usuario;
 import br.com.projeto.api_projeto.repositories.DocumentoRepository;
 import br.com.projeto.api_projeto.repositories.EventoRepository;
-import jdk.jfr.ContentType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -13,7 +11,6 @@ import org.springframework.web.bind.annotation.*;
 
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -49,7 +46,7 @@ public class EventoController {
     @PostMapping(value = "/cadastrar")
     public ResponseEntity<String> cadastrarEvento(@RequestBody Evento evento){
         try {
-            eventoRepository.salvar(new Evento(evento.getVagas(), evento.getLink() , evento.isLinkEPublico(), evento.getDataCriacao(), evento.getIdUsuarioCriacao(), evento.getData(), evento.getNome()));
+            eventoRepository.salvar(new Evento(evento.getVagas(), evento.getLink() , evento.isLinkEPublico(), evento.getDataCriacao(), evento.getIdUsuarioCriacao(), evento.getData(), evento.getDataFim(), evento.getNome()));
             return new ResponseEntity<>("Evento criado com sucesso!", HttpStatus.CREATED);
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);

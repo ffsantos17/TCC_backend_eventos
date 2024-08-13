@@ -2,6 +2,7 @@ package br.com.projeto.api_projeto.repositories;
 
 import br.com.projeto.api_projeto.models.Documento;
 import br.com.projeto.api_projeto.models.DocumentoUsuario;
+import br.com.projeto.api_projeto.models.Evento;
 import org.apache.tomcat.util.http.fileupload.InvalidFileNameException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
@@ -15,6 +16,7 @@ import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 
 @Repository
 public class DBDocumentoRepository implements DocumentoRepository {
@@ -32,6 +34,12 @@ public class DBDocumentoRepository implements DocumentoRepository {
 //        return jdbcTemplate.update("UPDATE evento SET evento_link=?,evento_data=?,evento_linkepublico=?,evento_nome=?,evento_vagas=? WHERE evento_Id=?",
 //                new Object[] {evento.getLink(), evento.getData(), evento.isLinkEPublico(), evento.getNome(), evento.getVagas(), evento.getId() });
 //    }
+
+    @Override
+    public int criar(Documento documento) {
+        return jdbcTemplate.update("INSERT INTO documento(documento_modelo, documento_nome, documento_possui_modelo, documento_data_criacao, documento_excluido) VALUES (?,?,?,NOW(),0)",
+                new Object[] { documento.getModelo(), documento.getNome(), documento.isPossuiModelo()});
+    }
 
     @Override
     public Documento buscarPorId(int id) {
@@ -56,6 +64,12 @@ public class DBDocumentoRepository implements DocumentoRepository {
 
         jdbcTemplate.update("UPDATE `usuario_r_documento` SET entregue=0,anexo_Nome='',anexo_Data=NULL WHERE id=?", documentoUsuarioId);
         return null;
+    }
+
+    @Override
+    public List<Documento> buscarTodos() {
+        return jdbcTemplate.query("SELECT documento_id AS id, documento_nome as nome, documento_possui_modelo AS possuiModelo, documento_modelo AS modelo, documento_data_criacao AS dataCriacao FROM documento WHERE documento_excluido=0;", BeanPropertyRowMapper.newInstance(Documento.class));
+
     }
 
 //    @Override

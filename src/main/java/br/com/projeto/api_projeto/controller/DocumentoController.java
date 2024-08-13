@@ -11,6 +11,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/documentos")
 public class DocumentoController {
@@ -27,10 +29,11 @@ public class DocumentoController {
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
-//    @PostMapping("/upload")
-//    public DocumentoUsuario upload(@RequestParam MultipartFile file, @RequestHeader("id") int id) throws IOException {
-//        return documentoRepository.upload(file, id);
-//    }
+    @PostMapping("/criar")
+    public ResponseEntity<String> criarDocumento(Documento documento){
+        int result = documentoRepository.criar(documento);
+        return new ResponseEntity<>(String.valueOf(result), HttpStatus.OK);
+    }
 
     @PostMapping("/upload")
     public ResponseEntity<String> uploadFile(@RequestParam MultipartFile file, @RequestHeader("id") int idDocumentoUsuario) {
@@ -66,11 +69,11 @@ public class DocumentoController {
         }
         return ResponseEntity.status(HttpStatus.OK).body("Deletado com sucesso: " + nomeAnexo);
     }
-//
-//    @GetMapping(value = "/listar", produces = MediaType.APPLICATION_JSON_VALUE)
-//    public List<Documento> listarDocumentos() {
-//        return documentoRepository.findAll();
-//    }
+
+    @GetMapping(value = "/listar", produces = "application/json; charset=utf-8" )
+    public List<Documento> listarDocumentos() {
+        return documentoRepository.buscarTodos();
+    }
 //
 //    @PostMapping(value = "/add", consumes = MediaType.APPLICATION_JSON_VALUE)
 //    public Documento cadastrarDocumento(@RequestBody Documento documento){

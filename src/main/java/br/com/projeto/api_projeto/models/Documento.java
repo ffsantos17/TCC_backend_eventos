@@ -1,11 +1,5 @@
 package br.com.projeto.api_projeto.models;
 
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
-
-import javax.print.Doc;
-import java.io.Serializable;
 import java.util.Date;
 
 public class Documento{
@@ -27,6 +21,20 @@ public class Documento{
         this.modelo = modelo;
         this.dataCriacao = dataCriacao;
         this.excluido = excluido;
+    }
+
+    public Documento(int id, String nome, boolean possuiModelo, String modelo, Date dataCriacao) {
+        this.id = id;
+        this.nome = nome;
+        this.possuiModelo = possuiModelo;
+        this.modelo = modelo;
+        this.dataCriacao = dataCriacao;
+    }
+
+    public Documento(String nome, boolean possuiModelo, String modelo) {
+        this.nome = nome;
+        this.possuiModelo = possuiModelo;
+        this.modelo = modelo;
     }
 
     public int getId() {

@@ -36,7 +36,7 @@ public class DBEventoRepository  implements EventoRepository{
     @Override
     public Evento buscarPorId(int id) {
         try {
-            Evento evento = jdbcTemplate.queryForObject("SELECT evento.evento_id as id, evento_link as link, evento_data as data, evento_data_criacao as dataCriacao, evento_id_usuario_criacao as idUsuarioCriacao, evento_linkepublico as linkEPublico, evento_nome as nome, evento_vagas as vagas, evento_imagem as imagem, evento_descricao as descricao, evento_visitas as visitas, evento_local as local, (evento.evento_vagas-COUNT(inscricoes.evento_r_usuario_id)) as vagasDisponiveis FROM evento LEFT JOIN evento_r_usuario AS inscricoes ON evento.evento_id=inscricoes.evento_id AND inscricoes.status NOT IN ('cancelado') WHERE evento.evento_id=?",
+            Evento evento = jdbcTemplate.queryForObject("SELECT evento.evento_id as id, evento_link as link, evento_data as data, evento_DataFim as dataFim, evento_data_criacao as dataCriacao, evento_id_usuario_criacao as idUsuarioCriacao, evento_linkepublico as linkEPublico, evento_nome as nome, evento_vagas as vagas, evento_imagem as imagem, evento_descricao as descricao, evento_visitas as visitas, evento_local as local, (evento.evento_vagas-COUNT(inscricoes.evento_r_usuario_id)) as vagasDisponiveis FROM evento LEFT JOIN evento_r_usuario AS inscricoes ON evento.evento_id=inscricoes.evento_id AND inscricoes.status NOT IN ('cancelado') WHERE evento.evento_id=?",
                     BeanPropertyRowMapper.newInstance(Evento.class), id);
             evento.setDocumentos(buscarDocumentoEvento(evento.getId()));
             return evento;
@@ -52,7 +52,7 @@ public class DBEventoRepository  implements EventoRepository{
 
     @Override
     public List<Evento> buscarTodos() {
-        return jdbcTemplate.query("SELECT evento.evento_id as id, evento_link as link, evento_data as data, evento_data_criacao as dataCriacao, evento_id_usuario_criacao as idUsuarioCriacao, evento_linkepublico as linkEPublico, evento_nome as nome, evento_vagas as vagas, evento_imagem as imagem, evento_descricao as descricao, evento_visitas as visitas, evento_local as local, (evento.evento_vagas-COUNT(inscricoes.evento_r_usuario_id)) as vagasDisponiveis from evento LEFT JOIN evento_r_usuario AS inscricoes ON evento.evento_id=inscricoes.evento_id AND inscricoes.status NOT IN ('cancelado') where evento_data > NOW() GROUP BY evento.evento_id, evento_link, evento_data, evento_data_criacao, evento_id_usuario_criacao, evento_linkepublico, evento_nome, evento_vagas, evento_imagem ORDER BY evento_data ASC;", BeanPropertyRowMapper.newInstance(Evento.class));
+        return jdbcTemplate.query("SELECT evento.evento_id as id, evento_link as link, evento_data as data, evento_DataFim as dataFim, evento_data_criacao as dataCriacao, evento_id_usuario_criacao as idUsuarioCriacao, evento_linkepublico as linkEPublico, evento_nome as nome, evento_vagas as vagas, evento_imagem as imagem, evento_descricao as descricao, evento_visitas as visitas, evento_local as local, (evento.evento_vagas-COUNT(inscricoes.evento_r_usuario_id)) as vagasDisponiveis from evento LEFT JOIN evento_r_usuario AS inscricoes ON evento.evento_id=inscricoes.evento_id AND inscricoes.status NOT IN ('cancelado') where evento_data > NOW() GROUP BY evento.evento_id, evento_link, evento_data, evento_data_criacao, evento_id_usuario_criacao, evento_linkepublico, evento_nome, evento_vagas, evento_imagem ORDER BY evento_data ASC;", BeanPropertyRowMapper.newInstance(Evento.class));
 
     }
 

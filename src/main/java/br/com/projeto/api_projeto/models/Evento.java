@@ -9,6 +9,7 @@ public class Evento {
     private int id;
     private String nome;
     private Date data;
+    private Date dataFim;
     private int idUsuarioCriacao;
     private Date dataCriacao;
     private boolean linkEPublico;
@@ -23,10 +24,11 @@ public class Evento {
 
     public Evento() {}
 
-    public Evento(int id, String nome, Date data, int idUsuarioCriacao, Date dataCriacao, boolean linkEPublico, String link, int vagas, String imagem, String descricao, int visitas, String local, int vagasDisponiveis, List<DocumentosEvento> documentos) {
+    public Evento(int id, String nome, Date data, Date dataFim, int idUsuarioCriacao, Date dataCriacao, boolean linkEPublico, String link, int vagas, String imagem, String descricao, int visitas, String local, int vagasDisponiveis, List<DocumentosEvento> documentos) {
         this.id = id;
         this.nome = nome;
         this.data = data;
+        this.dataFim = dataFim;
         this.idUsuarioCriacao = idUsuarioCriacao;
         this.dataCriacao = dataCriacao;
         this.linkEPublico = linkEPublico;
@@ -39,13 +41,14 @@ public class Evento {
         this.vagasDisponiveis = vagasDisponiveis;
     }
 
-    public Evento(int vagas, String link, boolean linkEPublico, Date dataCriacao, int idUsuarioCriacao, Date data, String nome) {
+    public Evento(int vagas, String link, boolean linkEPublico, Date dataCriacao, int idUsuarioCriacao, Date data, Date dataFim, String nome) {
         this.vagas = vagas;
         this.link = link;
         this.linkEPublico = linkEPublico;
         this.dataCriacao = dataCriacao;
         this.idUsuarioCriacao = idUsuarioCriacao;
         this.data = data;
+        this.dataFim = dataFim;
         this.nome = nome;
     }
 
@@ -161,5 +164,13 @@ public class Evento {
 
     public void setVagasDisponiveis(int vagasDisponiveis) {
         this.vagasDisponiveis = vagasDisponiveis;
+    }
+
+    public Date getDataFim() {
+        return dataFim;
+    }
+
+    public void setDataFim(Date dataFim) {
+        this.dataFim = dataFim;
     }
 }
