@@ -7,8 +7,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
+import java.sql.Date;
+import java.sql.PreparedStatement;
+import java.sql.Statement;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.List;
 
 @Repository
@@ -20,11 +27,40 @@ public class DBEventoRepository  implements EventoRepository{
     @Autowired
     DocumentoRepository documentoRepository;
 
+    String pattern = "yyyy-MM-dd";
+    SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
+
 
     @Override
-    public int salvar(Evento evento) {
-        return jdbcTemplate.update("INSERT INTO evento (evento_data, evento_link, evento_data_criacao, evento_id_usuario_criacao, evento_linkepublico, evento_nome, evento_vagas) VALUES(?,?,?,?,?,?,?)",
-                new Object[] { evento.getData(), evento.getLink(), evento.getDataCriacao(), evento.getIdUsuarioCriacao(), evento.isLinkEPublico(), evento.getNome(), evento.getVagas() });
+    public int salvar(Evento evento, ArrayList<String> documentos) {
+        String SQL = "INSERT INTO `evento`(`evento_link`, `evento_data`, `evento_dataFim`, `evento_data_criacao`, `evento_id_usuario_criacao`, `evento_linkepublico`, `evento_nome`, `evento_vagas`, `evento_imagem`, `evento_descricao`, `evento_local`) VALUES (?,?,?,NOW(),?,?,?,?,?,?,?)";
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+        jdbcTemplate.update(connection -> {
+            PreparedStatement ps = connection.prepareStatement(SQL,
+                    Statement.RETURN_GENERATED_KEYS);
+            ps.setString(1, evento.getLink());
+            ps.setString(2, simpleDateFormat.format(evento.getData()));
+            ps.setString(3, simpleDateFormat.format(evento.getDataFim()));
+            ps.setInt(4, evento.getIdUsuarioCriacao());
+            ps.setBoolean(5, evento.isLinkEPublico());
+            ps.setString(6, evento.getNome());
+            ps.setInt(7, evento.getVagas());
+            ps.setString(8, evento.getImagem());
+            ps.setString(9, evento.getDescricao());
+            ps.setString(10, evento.getLocal());
+
+            return ps;
+        }, keyHolder);
+
+        int linhaInserida = keyHolder.getKey().intValue();
+
+        documentos.forEach(e ->{
+            jdbcTemplate.update("INSERT INTO `evento_r_documento`(`evento_id`, `documento_id`) VALUES (?,?)", linhaInserida, e);
+        });
+
+        return linhaInserida;
+//        return jdbcTemplate.update("INSERT INTO `evento`(`evento_link`, `evento_data`, `evento_dataFim`, `evento_data_criacao`, `evento_id_usuario_criacao`, `evento_linkepublico`, `evento_nome`, `evento_vagas`, `evento_imagem`, `evento_descricao`, `evento_local`) VALUES (?,?,?,NOW(),?,?,?,?,?,?,?)",
+//                new Object[] { evento.getData(), evento.getLink(), evento.getDataCriacao(), evento.getIdUsuarioCriacao(), evento.isLinkEPublico(), evento.getNome(), evento.getVagas() });
     }
 
     @Override

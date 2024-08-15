@@ -1,9 +1,11 @@
 package br.com.projeto.api_projeto.models;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
 public class Evento {
+
 
 
     private int id;
@@ -46,6 +48,15 @@ public class Evento {
         this.link = link;
         this.linkEPublico = linkEPublico;
         this.dataCriacao = dataCriacao;
+        this.idUsuarioCriacao = idUsuarioCriacao;
+        this.data = data;
+        this.dataFim = dataFim;
+        this.nome = nome;
+    }
+
+    public Evento(int vagas, boolean linkEPublico, int idUsuarioCriacao, Date data, Date dataFim, String nome) {
+        this.vagas = vagas;
+        this.linkEPublico = linkEPublico;
         this.idUsuarioCriacao = idUsuarioCriacao;
         this.data = data;
         this.dataFim = dataFim;

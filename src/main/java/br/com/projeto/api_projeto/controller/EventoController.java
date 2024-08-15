@@ -3,14 +3,19 @@ package br.com.projeto.api_projeto.controller;
 import br.com.projeto.api_projeto.models.Evento;
 import br.com.projeto.api_projeto.repositories.DocumentoRepository;
 import br.com.projeto.api_projeto.repositories.EventoRepository;
+import br.com.projeto.api_projeto.services.FileServiceImpl;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @RestController
@@ -21,6 +26,9 @@ public class EventoController {
 
     @Autowired
     DocumentoRepository documentoRepository;
+
+    @Autowired
+    FileServiceImpl fileServiceImpl;
 
     @GetMapping(value = "/listar", produces = "application/json; charset=utf-8" )
     public ResponseEntity<List<Evento>> listarEventos() {
@@ -44,10 +52,15 @@ public class EventoController {
     }
 
     @PostMapping(value = "/cadastrar")
-    public ResponseEntity<String> cadastrarEvento(@RequestBody Evento evento){
+    public ResponseEntity<String> cadastrarEvento(@RequestParam MultipartFile file, @RequestHeader("json") String json, @RequestHeader("documentos") String documentos){
         try {
-            eventoRepository.salvar(new Evento(evento.getVagas(), evento.getLink() , evento.isLinkEPublico(), evento.getDataCriacao(), evento.getIdUsuarioCriacao(), evento.getData(), evento.getDataFim(), evento.getNome()));
-            return new ResponseEntity<>("Evento criado com sucesso!", HttpStatus.CREATED);
+            ObjectMapper objectMapper = new ObjectMapper();
+            Evento evento = objectMapper.readValue(json, Evento.class);
+            String[] splits =  documentos.replace("[","").replace("]","").split(",");
+            ArrayList<String> arrayList = new ArrayList<>(Arrays.asList(splits));
+            eventoRepository.salvar(evento, arrayList);
+            fileServiceImpl.upload(file, "uploads/imagens");
+            return new ResponseEntity<>("Evento criado com sucesso!", HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }

@@ -5,10 +5,11 @@ import br.com.projeto.api_projeto.models.DocumentosEvento;
 import br.com.projeto.api_projeto.models.Evento;
 import org.springframework.stereotype.Repository;
 
+import java.util.ArrayList;
 import java.util.List;
 @Repository
 public interface EventoRepository{
-    int salvar(Evento evento);
+    int salvar(Evento evento, ArrayList<String> documentos);
 
     int atualizar(Evento evento);
 

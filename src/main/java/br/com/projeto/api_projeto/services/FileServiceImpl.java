@@ -27,9 +27,9 @@ public class FileServiceImpl implements FileService {
     }
 
     @Override
-    public boolean upload(MultipartFile file) {
+    public boolean upload(MultipartFile file, String pasta) {
         try {
-            Files.copy(file.getInputStream(), this.root.resolve(file.getOriginalFilename()));
+            Files.copy(file.getInputStream(), Paths.get(pasta).resolve(file.getOriginalFilename()));
             return true;
         } catch (Exception e) {
             if (e instanceof FileAlreadyExistsException) {
@@ -40,9 +40,9 @@ public class FileServiceImpl implements FileService {
     }
 
     @Override
-    public Resource download(String filename) {
+    public Resource download(String filename, String pasta) {
         try {
-            Path file = root.resolve(filename);
+            Path file = Paths.get("uploads/"+pasta).resolve(filename);
             Resource resource = new UrlResource(file.toUri());
 
             if (resource.exists() || resource.isReadable()) {
