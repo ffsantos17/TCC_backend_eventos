@@ -34,17 +34,25 @@ public class DocumentoController {
     }
 
     @PostMapping("/criar")
-    public ResponseEntity<String> criarDocumento(@RequestParam MultipartFile file, @RequestHeader("nomeDoc") String nomeDocumento, @RequestHeader("pModelo") boolean pModelo){
+    public ResponseEntity<String> criarDocumento(@RequestParam(required = false) MultipartFile file, @RequestHeader("nomeDoc") String nomeDocumento, @RequestHeader("pModelo") boolean pModelo){
         Documento documento = new Documento();
         documento.setNome(nomeDocumento);
         documento.setPossuiModelo(pModelo);
-        documento.setModelo(file.getOriginalFilename());
+        if (file != null && !file.isEmpty()) {
+            documento.setModelo(file.getOriginalFilename());
+        } else {
+            documento.setModelo(null); // Ou defina como achar melhor
+        }
+//        documento.setModelo(file.getOriginalFilename());
         int result = documentoRepository.criar(documento);
         if(result == 1){
-            boolean up = fileServiceImpl.upload(file, "uploads/modelos");
-            if(up){
-                return new ResponseEntity<>("Documento criado com sucesso", HttpStatus.OK);
+            if (file != null && !file.isEmpty()) {
+                boolean up = fileServiceImpl.upload(file, "uploads/modelos");
+//                if (up) {
+//                    return new ResponseEntity<>("Documento criado com sucesso", HttpStatus.OK);
+//                }
             }
+            return new ResponseEntity<>("Documento criado com sucesso", HttpStatus.OK);
         }
         return new ResponseEntity<>(String.valueOf(result), HttpStatus.EXPECTATION_FAILED);
     }
