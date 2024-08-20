@@ -8,6 +8,8 @@ public class EventosUsuario {
     private int idUsuario;
     private int idEvento;
     private String status;
+    private int tipoInscricao_Id;
+    private String tipoInscricao_Nome;
     private Evento evento;
     private List<DocumentoUsuario> documentos;
 
@@ -19,12 +21,14 @@ public class EventosUsuario {
         this.idEvento = idEvento;
     }
 
-    public EventosUsuario(int id, int idUsuario, int idEvento, String status,Evento evento) {
+    public EventosUsuario(int id, int idUsuario, int idEvento, String status,Evento evento, int tipoInscricao_Id, String tipoInscricao_Nome) {
         this.id = id;
         this.idUsuario = idUsuario;
         this.idEvento = idEvento;
         this.status = status;
         this.evento = evento;
+        this.tipoInscricao_Id = tipoInscricao_Id;
+        this.tipoInscricao_Nome = tipoInscricao_Nome;
     }
 
     public int getId() {
@@ -73,5 +77,21 @@ public class EventosUsuario {
 
     public void setDocumentos(List<DocumentoUsuario> documentos) {
         this.documentos = documentos;
+    }
+
+    public int getTipoInscricao_Id() {
+        return tipoInscricao_Id;
+    }
+
+    public void setTipoInscricao_Id(int tipoInscricao_Id) {
+        this.tipoInscricao_Id = tipoInscricao_Id;
+    }
+
+    public String getTipoInscricao_Nome() {
+        return tipoInscricao_Nome;
+    }
+
+    public void setTipoInscricao_Nome(String tipoInscricao_Nome) {
+        this.tipoInscricao_Nome = tipoInscricao_Nome;
     }
 }

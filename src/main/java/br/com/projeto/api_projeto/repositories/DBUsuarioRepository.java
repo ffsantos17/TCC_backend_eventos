@@ -83,7 +83,7 @@ public class DBUsuarioRepository implements UsuarioRepository {
 
     public List<EventosUsuario> buscarEventosUsuarios(int idUsuario) {
         try {
-            List<EventosUsuario> eventos = jdbcTemplate.query("SELECT evento_r_usuario_id as id, evento_id as idEvento, usuario_id as idUsuario, status as status FROM `evento_r_usuario` WHERE usuario_id=?",
+            List<EventosUsuario> eventos = jdbcTemplate.query("SELECT evento_r_usuario_id as id, evento_id as idEvento, usuario_id as idUsuario, status as status, lista_item_tipoInscricao_id as tipoInscricao_Id, listaI.lista_item_nome as tipoInscricao_Nome FROM `evento_r_usuario` LEFT JOIN lista_item AS listaI ON listaI.lista_item_id=evento_r_usuario.lista_item_tipoInscricao_id AND listaI.lista_id=1 WHERE usuario_id=?",
                     BeanPropertyRowMapper.newInstance(EventosUsuario.class), idUsuario);
             eventos.forEach(e ->{
                 e.setEvento(eventoRepository.buscarPorId(e.getIdEvento()));
