@@ -1,5 +1,8 @@
 package br.com.projeto.api_projeto.models;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class DocumentoUsuario {
 
     private int id;
@@ -8,6 +11,8 @@ public class DocumentoUsuario {
     private Documento documento;
     private boolean entregue;
     private String nomeAnexo;
+    private boolean visualizado;
+    private List<Alerta> alertas;
 
     public DocumentoUsuario() {}
 
@@ -19,13 +24,15 @@ public class DocumentoUsuario {
         this.nomeAnexo = nomeAnexo;
     }
 
-    public DocumentoUsuario(int id, int idEventoUsuario, int idDocumento, boolean entregue, Documento documento, String nomeAnexo) {
+    public DocumentoUsuario(int id, int idEventoUsuario, int idDocumento, boolean entregue, Documento documento, String nomeAnexo, List<Alerta> alertas, boolean visualizado) {
         this.id = id;
         this.idEventoUsuario = idEventoUsuario;
         this.idDocumento = idDocumento;
         this.entregue = entregue;
         this.documento = documento;
         this.nomeAnexo = nomeAnexo;
+        this.alertas = alertas;
+        this.visualizado = visualizado;
     }
 
     public int getId() {
@@ -74,5 +81,21 @@ public class DocumentoUsuario {
 
     public void setNomeAnexo(String nomeAnexo) {
         this.nomeAnexo = nomeAnexo;
+    }
+
+    public List<Alerta> getAlertas() {
+        return alertas;
+    }
+
+    public void setAlertas(List<Alerta> alertas) {
+        this.alertas = alertas;
+    }
+
+    public boolean isVisualizado() {
+        return visualizado;
+    }
+
+    public void setVisualizado(boolean visualizado) {
+        this.visualizado = visualizado;
     }
 }

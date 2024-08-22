@@ -21,5 +21,7 @@ public interface DocumentoRepository{
 
     DocumentoUsuario removerDocumento(int documentoUsuarioId);
 
+    boolean visualizarDocumento(int documentoUsuarioId);
+
 
 }

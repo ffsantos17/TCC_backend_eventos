@@ -1,6 +1,7 @@
 package br.com.projeto.api_projeto.controller;
 
 import br.com.projeto.api_projeto.models.Documento;
+import br.com.projeto.api_projeto.models.DocumentoUsuario;
 import br.com.projeto.api_projeto.repositories.DocumentoRepository;
 import br.com.projeto.api_projeto.services.FileServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -140,6 +141,12 @@ public class DocumentoController {
         return bytes;
 
 
+    }
+
+    @GetMapping("/visualizar_documento")
+    public ResponseEntity<Boolean> visualizarDocumento(@RequestHeader("idDocumentoUsuario") int idDocumentoUsuario) {
+        boolean response =  documentoRepository.visualizarDocumento(idDocumentoUsuario);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 //
 //    @PostMapping(value = "/add", consumes = MediaType.APPLICATION_JSON_VALUE)

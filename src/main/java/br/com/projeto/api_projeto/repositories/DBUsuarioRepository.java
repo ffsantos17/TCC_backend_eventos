@@ -24,6 +24,9 @@ public class DBUsuarioRepository implements UsuarioRepository {
 
     @Autowired
     DocumentoRepository documentoRepository;
+
+    @Autowired
+    AlertaRepository alertaRepository;
     //private BCryptPasswordEncoder bCryptPasswordEncoder;
 
 
@@ -122,11 +125,13 @@ public class DBUsuarioRepository implements UsuarioRepository {
 
     public List<DocumentoUsuario> buscarDocumentosUsuarios(int idEventoUsuario) {
         try {
-            List<DocumentoUsuario> documentos = jdbcTemplate.query("SELECT userDoc.id, userDoc.evento_r_usuario_id as idEventoUsuario, doc.documento_id as idDocumento, userDoc.entregue as entregue, anexo_Nome as nomeAnexo FROM `usuario_r_documento` as userDoc LEFT JOIN evento_r_documento as eveDoc ON eveDoc.evento_r_documento_id=userDoc.evento_r_documento_id LEFT JOIN documento as doc ON doc.documento_id=eveDoc.documento_id WHERE evento_r_usuario_id=?;",
+            List<DocumentoUsuario> documentos = jdbcTemplate.query("SELECT userDoc.id, userDoc.evento_r_usuario_id as idEventoUsuario, doc.documento_id as idDocumento, userDoc.entregue as entregue, anexo_Nome as nomeAnexo, userDoc.anexo_visualizado as visualizado FROM `usuario_r_documento` as userDoc LEFT JOIN evento_r_documento as eveDoc ON eveDoc.evento_r_documento_id=userDoc.evento_r_documento_id LEFT JOIN documento as doc ON doc.documento_id=eveDoc.documento_id WHERE evento_r_usuario_id=?;",
                     BeanPropertyRowMapper.newInstance(DocumentoUsuario.class), idEventoUsuario);
             documentos.forEach(d ->{
                 d.setDocumento(documentoRepository.buscarPorId(d.getIdDocumento()));
+                d.setAlertas(alertaRepository.listar(d.getId(), "usuario_r_documento"));
             });
+
 
             return documentos;
         } catch (IncorrectResultSizeDataAccessException e) {

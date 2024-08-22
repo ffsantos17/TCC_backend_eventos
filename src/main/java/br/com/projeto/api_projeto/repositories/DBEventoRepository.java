@@ -133,14 +133,15 @@ public class DBEventoRepository  implements EventoRepository{
     @Override
     public List<ParticipanteEvento> buscarParticipanteEvento(int idEvento) {
         try {
-            List<ParticipanteEvento> participantes = jdbcTemplate.query("SELECT part.evento_r_usuario_id as id, \n" +
-                            "part.evento_id as idEvento, \n" +
+            List<ParticipanteEvento> participantes = jdbcTemplate.query("SELECT part.evento_r_usuario_id as id,\n" +
+                            "part.evento_id as idEvento,\n" +
                             "part.usuario_id as idUsuario, \n" +
                             "part.lista_item_tipoInscricao_id as tipoParticipante_Id, \n" +
                             "l.lista_item_nome as tipoParticipante_Nome, \n" +
                             "part.lista_item_statusInscricao_id as status_id,\n" +
                             "listaStatus.lista_item_nome as status, \n" +
                             "(SELECT COUNT(*) FROM usuario_r_documento WHERE evento_r_usuario_id = part.evento_r_usuario_id AND entregue = 1) as documentosEntregues, \n" +
+                            "(SELECT COUNT(*) FROM usuario_r_documento WHERE evento_r_usuario_id = part.evento_r_usuario_id AND anexo_visualizado=false) as documentosSemVisualizar, \n" +
                             "(SELECT COUNT(*) FROM usuario_r_documento WHERE evento_r_usuario_id = part.evento_r_usuario_id) as totalDocumentos \n" +
                             "FROM evento_r_usuario as part \n" +
                             "LEFT JOIN lista_item as l ON part.lista_item_tipoInscricao_id = l.lista_item_id AND l.lista_id=1\n" +

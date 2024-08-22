@@ -38,7 +38,7 @@ public class DBDocumentoRepository implements DocumentoRepository {
     @Override
     public int criar(Documento documento) {
         return jdbcTemplate.update("INSERT INTO documento(documento_modelo, documento_nome, documento_possui_modelo, documento_data_criacao, documento_excluido) VALUES (?,?,?,NOW(),0)",
-                new Object[] { documento.getModelo(), documento.getNome(), documento.isPossuiModelo()});
+                documento.getModelo(), documento.getNome(), documento.isPossuiModelo());
     }
 
     @Override
@@ -55,8 +55,18 @@ public class DBDocumentoRepository implements DocumentoRepository {
     @Override
     public DocumentoUsuario entregarDocumento(String nomeArquivo, int documentoUsuarioId) {
 
-        jdbcTemplate.update("UPDATE `usuario_r_documento` SET entregue=1,anexo_Nome=?,anexo_Data=NOW() WHERE id=?", nomeArquivo, documentoUsuarioId);
+        jdbcTemplate.update("UPDATE `usuario_r_documento` SET entregue=1,anexo_Nome=?,anexo_Data=NOW(), anexo_visualizado=0 WHERE id=?", nomeArquivo, documentoUsuarioId);
         return null;
+    }
+
+    @Override
+    public boolean visualizarDocumento(int documentoUsuarioId) {
+        try {
+        jdbcTemplate.update("UPDATE `usuario_r_documento` SET `anexo_visualizado`=1 WHERE `id`=?", documentoUsuarioId);
+        return true;
+        }catch (IncorrectResultSizeDataAccessException e){
+            return false;
+        }
     }
 
     @Override

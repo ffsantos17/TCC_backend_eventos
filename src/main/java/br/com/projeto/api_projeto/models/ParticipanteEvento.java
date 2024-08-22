@@ -12,12 +12,13 @@ public class ParticipanteEvento {
     private int status_id;
     private String status;
     private int documentosEntregues;
+    private int documentosSemVisualizar;
     private int totalDocumentos;
     private Usuario usuario;
 
     public ParticipanteEvento() {}
 
-    public ParticipanteEvento(int id, int idEvento, int idUsuario, int tipoParticipante_Id, String tipoParticipante_Nome,int  status_id,String status, int documentosEntregues, int totalDocumentos) {
+    public ParticipanteEvento(int id, int idEvento, int idUsuario, int tipoParticipante_Id, String tipoParticipante_Nome,int  status_id,String status, int documentosEntregues, int documentosSemVisualizar, int totalDocumentos) {
         this.id = id;
         this.idEvento = idEvento;
         this.idUsuario = idUsuario;
@@ -26,6 +27,7 @@ public class ParticipanteEvento {
         this.status_id = status_id;
         this.status = status;
         this.documentosEntregues = documentosEntregues;
+        this.documentosSemVisualizar = documentosSemVisualizar;
         this.totalDocumentos = totalDocumentos;
     }
 
@@ -107,5 +109,13 @@ public class ParticipanteEvento {
 
     public void setStatus_id(int status_id) {
         this.status_id = status_id;
+    }
+
+    public int getDocumentosSemVisualizar() {
+        return documentosSemVisualizar;
+    }
+
+    public void setDocumentosSemVisualizar(int documentosSemVisualizar) {
+        this.documentosSemVisualizar = documentosSemVisualizar;
     }
 }

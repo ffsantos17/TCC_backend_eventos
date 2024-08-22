@@ -58,7 +58,7 @@ public class AuthController {
 
             return ResponseEntity.ok(token);
         } catch (Exception e){
-            return new ResponseEntity<>("Usuario ou senha invalidos", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Usuario ou senha invalidos "+e, HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
     }
