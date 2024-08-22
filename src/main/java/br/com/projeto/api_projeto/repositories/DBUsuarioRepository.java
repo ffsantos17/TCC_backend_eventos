@@ -83,7 +83,17 @@ public class DBUsuarioRepository implements UsuarioRepository {
 
     public List<EventosUsuario> buscarEventosUsuarios(int idUsuario) {
         try {
-            List<EventosUsuario> eventos = jdbcTemplate.query("SELECT evento_r_usuario_id as id, evento_id as idEvento, usuario_id as idUsuario, status as status, lista_item_tipoInscricao_id as tipoInscricao_Id, listaI.lista_item_nome as tipoInscricao_Nome FROM `evento_r_usuario` LEFT JOIN lista_item AS listaI ON listaI.lista_item_id=evento_r_usuario.lista_item_tipoInscricao_id AND listaI.lista_id=1 WHERE usuario_id=?",
+            List<EventosUsuario> eventos = jdbcTemplate.query("SELECT evento_r_usuario_id as id, " +
+                            "evento_id as idEvento, " +
+                            "usuario_id as idUsuario," +
+                            "evento_r_usuario.lista_item_statusInscricao_id as status_id, " +
+                            "listaStatus.lista_item_nome as status, " +
+                            "lista_item_tipoInscricao_id as tipoInscricao_Id, " +
+                            "listaI.lista_item_nome as tipoInscricao_Nome " +
+                            "FROM `evento_r_usuario` \n" +
+                            "LEFT JOIN lista_item AS listaI ON listaI.lista_item_id=evento_r_usuario.lista_item_tipoInscricao_id AND listaI.lista_id=1 \n" +
+                            "LEFT JOIN lista_item AS listaStatus ON listaStatus.lista_item_id=evento_r_usuario.lista_item_statusInscricao_id AND listaStatus.lista_id=2 \n" +
+                            "WHERE usuario_id=?",
                     BeanPropertyRowMapper.newInstance(EventosUsuario.class), idUsuario);
             eventos.forEach(e ->{
                 e.setEvento(eventoRepository.buscarPorId(e.getIdEvento()));
@@ -97,7 +107,7 @@ public class DBUsuarioRepository implements UsuarioRepository {
     }
     public EventosUsuario buscarEventoUsuario(int idEventoUsuario, int usuarioId) {
         try {
-            EventosUsuario evento = jdbcTemplate.queryForObject("SELECT evento_r_usuario_id as id, evento_id as idEvento, usuario_id as idUsuario, status as status FROM `evento_r_usuario` WHERE evento_r_usuario_id=? and usuario_id = ?",
+            EventosUsuario evento = jdbcTemplate.queryForObject("SELECT evento_r_usuario_id as id, evento_id as idEvento, usuario_id as idUsuario, evento_r_usuario.lista_item_statusInscricao_id as status_id, listaStatus.lista_item_nome as status FROM `evento_r_usuario` LEFT JOIN lista_item AS listaStatus ON listaStatus.lista_item_id=evento_r_usuario.lista_item_statusInscricao_id AND listaStatus.lista_id=2 WHERE evento_r_usuario_id=? and usuario_id = ?",
                     BeanPropertyRowMapper.newInstance(EventosUsuario.class), idEventoUsuario, usuarioId);
             if(evento != null) {
                 evento.setEvento(eventoRepository.buscarPorId(evento.getIdEvento()));
@@ -137,7 +147,7 @@ public class DBUsuarioRepository implements UsuarioRepository {
 
     public int inscreverEvento(int eventoId, int usuarioId){
 //        var response = jdbcTemplate.update("INSERT INTO evento_r_usuario(evento_id, usuario_id, status) VALUES (?, ?,'pendente')", eventoId, usuarioId);
-        String SQL = "INSERT INTO evento_r_usuario(evento_id, usuario_id, status) VALUES (?, ?,'pendente')";
+        String SQL = "INSERT INTO evento_r_usuario(evento_id, usuario_id, lista_item_statusInscricao_id) VALUES (?, ?,5)";
         KeyHolder keyHolder = new GeneratedKeyHolder();
         jdbcTemplate.update(connection -> {
             PreparedStatement ps = connection.prepareStatement(SQL,

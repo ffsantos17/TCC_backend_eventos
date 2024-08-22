@@ -1,8 +1,10 @@
 package br.com.projeto.api_projeto.controller;
 
 import br.com.projeto.api_projeto.models.Evento;
+import br.com.projeto.api_projeto.models.ParticipanteEvento;
 import br.com.projeto.api_projeto.repositories.DocumentoRepository;
 import br.com.projeto.api_projeto.repositories.EventoRepository;
+import br.com.projeto.api_projeto.repositories.UsuarioRepository;
 import br.com.projeto.api_projeto.services.FileServiceImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.json.JSONObject;
@@ -26,6 +28,10 @@ public class EventoController {
 
     @Autowired
     DocumentoRepository documentoRepository;
+
+
+    @Autowired
+    UsuarioRepository usuarioRepository;
 
     @Autowired
     FileServiceImpl fileServiceImpl;
@@ -113,6 +119,21 @@ public class EventoController {
     public ResponseEntity<Integer> inserirVisita(@RequestHeader("id") int id){
         int result = eventoRepository.inserirVisita(id);
         return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
+    @GetMapping("/alterar_status")
+    public ResponseEntity<Integer> alterarStatus(@RequestHeader("id") int id, @RequestHeader("status_id") int status_id){
+        int result = eventoRepository.alterarStatusInscricao(id,status_id);
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
+    @GetMapping("/buscar-participantes")
+    public ResponseEntity<List<ParticipanteEvento>> buscarParticipantes(@RequestHeader("id") int id){
+        List<ParticipanteEvento> participantes = eventoRepository.buscarParticipanteEvento(id);
+        participantes.forEach(p ->{
+            p.setUsuario(usuarioRepository.buscarPorId(p.getIdUsuario()));
+        });
+        return new ResponseEntity<>(participantes, HttpStatus.OK);
     }
 
 }

@@ -1,4 +1,5 @@
 package br.com.projeto.api_projeto.controller;
+import br.com.projeto.api_projeto.models.DocumentoUsuario;
 import br.com.projeto.api_projeto.models.EventosUsuario;
 import br.com.projeto.api_projeto.models.Usuario;
 import br.com.projeto.api_projeto.repositories.UsuarioRepository;
@@ -77,6 +78,17 @@ public class UsuarioController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Usuario usuario = (Usuario) authentication.getPrincipal();
         EventosUsuario response = usuarioRepository.buscarEventoUsuario(eventoUsuarioId, usuario.getId());
+        if(response == null){
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+
+        }else {
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        }
+    }
+
+    @GetMapping(value ="/buscar-documentos-usuario", produces = "application/json; charset=utf-8")
+    public ResponseEntity<List<DocumentoUsuario>> buscarDocumentosUsuario(@RequestHeader("eventoUsuarioId") int eventoUsuarioId){
+        List<DocumentoUsuario> response = usuarioRepository.buscarDocumentosUsuarios(eventoUsuarioId);
         if(response == null){
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
 

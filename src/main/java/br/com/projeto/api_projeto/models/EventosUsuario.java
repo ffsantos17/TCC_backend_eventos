@@ -7,6 +7,7 @@ public class EventosUsuario {
     private int id;
     private int idUsuario;
     private int idEvento;
+    private int status_id;
     private String status;
     private int tipoInscricao_Id;
     private String tipoInscricao_Nome;
@@ -21,10 +22,11 @@ public class EventosUsuario {
         this.idEvento = idEvento;
     }
 
-    public EventosUsuario(int id, int idUsuario, int idEvento, String status,Evento evento, int tipoInscricao_Id, String tipoInscricao_Nome) {
+    public EventosUsuario(int id, int idUsuario, int idEvento, int status_id,String status,Evento evento, int tipoInscricao_Id, String tipoInscricao_Nome) {
         this.id = id;
         this.idUsuario = idUsuario;
         this.idEvento = idEvento;
+        this.status_id = status_id;
         this.status = status;
         this.evento = evento;
         this.tipoInscricao_Id = tipoInscricao_Id;
@@ -93,5 +95,13 @@ public class EventosUsuario {
 
     public void setTipoInscricao_Nome(String tipoInscricao_Nome) {
         this.tipoInscricao_Nome = tipoInscricao_Nome;
+    }
+
+    public int getStatus_id() {
+        return status_id;
+    }
+
+    public void setStatus_id(int status_id) {
+        this.status_id = status_id;
     }
 }
