@@ -3,6 +3,7 @@ package br.com.projeto.api_projeto.models;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 public class Evento {
 
@@ -10,7 +11,9 @@ public class Evento {
 
     private int id;
     private String nome;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "America/Sao_Paulo")
     private Date data;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "America/Sao_Paulo")
     private Date dataFim;
     private int idUsuarioCriacao;
     private Date dataCriacao;

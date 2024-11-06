@@ -6,6 +6,7 @@ import br.com.projeto.api_projeto.repositories.DocumentoRepository;
 import br.com.projeto.api_projeto.repositories.EventoRepository;
 import br.com.projeto.api_projeto.repositories.UsuarioRepository;
 import br.com.projeto.api_projeto.services.FileServiceImpl;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,10 +62,20 @@ public class EventoController {
     public ResponseEntity<String> cadastrarEvento(@RequestParam MultipartFile file, @RequestHeader("json") String json, @RequestHeader("documentos") String documentos){
         try {
             ObjectMapper objectMapper = new ObjectMapper();
+            objectMapper.disable(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE);
             Evento evento = objectMapper.readValue(json, Evento.class);
-            String[] splits =  documentos.replace("[","").replace("]","").split(",");
-            ArrayList<String> arrayList = new ArrayList<>(Arrays.asList(splits));
-            eventoRepository.salvar(evento, arrayList);
+            ArrayList<String> arrayList;
+            documentos = documentos.replace("[", "").replace("]", "").trim();
+            if (documentos.isEmpty()) {
+                arrayList = new ArrayList<String>();
+            }else {
+                String[] splits = documentos.split(",");
+                arrayList = new ArrayList<>(Arrays.asList(splits));
+            }
+//            String[] splits =  documentos.replace("[","").replace("]","").split(",");
+//            ArrayList<String> arrayList = new ArrayList<>(Arrays.asList(splits));
+            int linhaInserida = eventoRepository.salvar(evento, arrayList);
+            usuarioRepository.inscreverEvento(linhaInserida, evento.getIdUsuarioCriacao(), 1, 4);
             fileServiceImpl.upload(file, "uploads/imagens");
             return new ResponseEntity<>("Evento criado com sucesso!", HttpStatus.OK);
         } catch (Exception e) {

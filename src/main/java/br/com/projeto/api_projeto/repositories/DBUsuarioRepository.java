@@ -39,8 +39,12 @@ public class DBUsuarioRepository implements UsuarioRepository {
 
     @Override
     public int atualizar(Usuario usuario) {
-        return jdbcTemplate.update("UPDATE usuario SET usuario_cpf=?,usuario_email=?,usuario_matricula=?,usuario_nome=?,usuario_Senha=?,tipo_usuario_id=? WHERE usuario_id = ?",
-                new Object[] { usuario.getCpf(), usuario.getEmail(), usuario.getMatricula(), usuario.getNome(), usuario.getSenha(), usuario.getTipoUsuarioId(), usuario.getId()});
+        try {
+            return jdbcTemplate.update("UPDATE usuario SET usuario_cpf=?,usuario_email=?,usuario_matricula=?,usuario_nome=?,tipo_usuario_id=? WHERE usuario_id = ?",
+                new Object[] { usuario.getCpf(), usuario.getEmail(), usuario.getMatricula(), usuario.getNome(), usuario.getTipoUsuarioId(), usuario.getId()});
+        } catch (IncorrectResultSizeDataAccessException e) {
+            return 0;
+        }
     }
 
     @Override
@@ -54,6 +58,7 @@ public class DBUsuarioRepository implements UsuarioRepository {
         }
     }
 
+
     @Override
     public int deletarPorId(int id) {
         return jdbcTemplate.update("DELETE FROM usuario WHERE usuario_id=?", id);
@@ -62,6 +67,11 @@ public class DBUsuarioRepository implements UsuarioRepository {
     @Override
     public List<Usuario> buscarTodos() {
         return jdbcTemplate.query("SELECT usuario_id as id, usuario_cpf as cpf, usuario_email as email, usuario_matricula as matricula, usuario_nome as nome, usuario_Senha as senha, usuario.tipo_usuario_id as tipoUsuarioId, tipo_usuario.tipo_usuario_Nome as tipoUsuarioNome FROM usuario LEFT JOIN tipo_usuario ON tipo_usuario.tipo_usuario_id=usuario.tipo_usuario_id", BeanPropertyRowMapper.newInstance(Usuario.class));
+    }
+
+    @Override
+    public List<Usuario> buscarPorTipo(int tipo) {
+        return jdbcTemplate.query("SELECT usuario_id as id, usuario_cpf as cpf, usuario_email as email, usuario_matricula as matricula, usuario_nome as nome, usuario_Senha as senha, usuario.tipo_usuario_id as tipoUsuarioId, tipo_usuario.tipo_usuario_Nome as tipoUsuarioNome FROM usuario LEFT JOIN tipo_usuario ON tipo_usuario.tipo_usuario_id=usuario.tipo_usuario_id WHERE usuario.tipo_usuario_id=?", BeanPropertyRowMapper.newInstance(Usuario.class), tipo);
     }
 
     public Usuario buscarPorEmail(String email) {
@@ -96,7 +106,8 @@ public class DBUsuarioRepository implements UsuarioRepository {
                             "FROM `evento_r_usuario` \n" +
                             "LEFT JOIN lista_item AS listaI ON listaI.lista_item_id=evento_r_usuario.lista_item_tipoInscricao_id AND listaI.lista_id=1 \n" +
                             "LEFT JOIN lista_item AS listaStatus ON listaStatus.lista_item_id=evento_r_usuario.lista_item_statusInscricao_id AND listaStatus.lista_id=2 \n" +
-                            "WHERE usuario_id=?",
+                            "WHERE usuario_id=? \n" +
+                            "ORDER BY evento_r_usuario_id DESC",
                     BeanPropertyRowMapper.newInstance(EventosUsuario.class), idUsuario);
             eventos.forEach(e ->{
                 e.setEvento(eventoRepository.buscarPorId(e.getIdEvento()));
@@ -150,15 +161,17 @@ public class DBUsuarioRepository implements UsuarioRepository {
         }
     }
 
-    public int inscreverEvento(int eventoId, int usuarioId){
+    public int inscreverEvento(int eventoId, int usuarioId, int tipoInscricao, int statusInscricao){
 //        var response = jdbcTemplate.update("INSERT INTO evento_r_usuario(evento_id, usuario_id, status) VALUES (?, ?,'pendente')", eventoId, usuarioId);
-        String SQL = "INSERT INTO evento_r_usuario(evento_id, usuario_id, lista_item_statusInscricao_id) VALUES (?, ?,5)";
+        String SQL = "INSERT INTO `evento_r_usuario`(`evento_id`, `usuario_id`, `lista_item_tipoInscricao_id`, `lista_item_statusInscricao_id`) VALUES (?,?,?,?)";
         KeyHolder keyHolder = new GeneratedKeyHolder();
         jdbcTemplate.update(connection -> {
             PreparedStatement ps = connection.prepareStatement(SQL,
                     Statement.RETURN_GENERATED_KEYS);
             ps.setInt(1, eventoId);
             ps.setInt(2, usuarioId);
+            ps.setInt(3, tipoInscricao);
+            ps.setInt(4, statusInscricao);
             return ps;
         }, keyHolder);
 
@@ -167,10 +180,11 @@ public class DBUsuarioRepository implements UsuarioRepository {
         String SQL_usuarioDoc = "INSERT INTO usuario_r_documento(evento_r_usuario_id, evento_r_documento_id, entregue) VALUES (?,?,0)";
 
         List<DocumentosEvento> documentos = eventoRepository.buscarDocumentoEvento(eventoId);
-
-        documentos.forEach(e ->{
-            jdbcTemplate.update("INSERT INTO usuario_r_documento(evento_r_usuario_id, evento_r_documento_id, entregue) VALUES (?,?,0)", linhaInserida, e.getId());
-        });
+        if(tipoInscricao == 3){
+            documentos.forEach(e ->{
+                jdbcTemplate.update("INSERT INTO usuario_r_documento(evento_r_usuario_id, evento_r_documento_id, entregue) VALUES (?,?,0)", linhaInserida, e.getId());
+            });
+        }
         return linhaInserida;
     }
 }

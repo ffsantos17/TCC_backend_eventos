@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.Authentication;
@@ -49,6 +50,22 @@ public class UsuarioController {
         }
     }
 
+    @GetMapping(value = "/listar_por_tipo", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<Usuario>> listarUsuariosPorTipo(@RequestHeader("tipoUsuario_Id") int tipoUsuario_Id) {
+        try {
+            List<Usuario> usuarios = new ArrayList<Usuario>();
+
+            usuarioRepository.buscarPorTipo(tipoUsuario_Id).forEach(usuarios::add);
+            usuarios.forEach(user -> System.out.println(user.getEmail()));
+            if (usuarios.isEmpty()) {
+                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            }
+            return new ResponseEntity<>(usuarios, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
     @GetMapping(value = "/buscar/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> buscar(@PathVariable int id){
         try {
@@ -64,8 +81,10 @@ public class UsuarioController {
 
     @PostMapping(value ="/registrar-usuario-evento", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> registarUsuarioEvento(@RequestHeader("eventoId") int eventoId,
-                                                        @RequestHeader("usuarioId") int usuarioId){
-        int response = usuarioRepository.inscreverEvento(eventoId, usuarioId);
+                                                        @RequestHeader("usuarioId") int usuarioId,
+                                                        @RequestHeader("tipoInscricaoId") int tipoInscricaoId,
+                                                        @RequestHeader("statusInscricaoId") int statusInscricaoId){
+        int response = usuarioRepository.inscreverEvento(eventoId, usuarioId, tipoInscricaoId, statusInscricaoId);
         if(response != 0){
             return new ResponseEntity<>(String.valueOf(response), HttpStatus.OK);
         }else {
@@ -94,6 +113,29 @@ public class UsuarioController {
 
         }else {
             return new ResponseEntity<>(response, HttpStatus.OK);
+        }
+    }
+
+    @PostMapping("/editar")
+    public ResponseEntity<String> editarUsuario(Usuario userInfo) {
+        try {
+            int insert = usuarioRepository.atualizar(userInfo);
+            if(insert == 1) {
+                return new ResponseEntity<>("Sucesso", HttpStatus.OK);
+            }
+            return new ResponseEntity<>("Erro ao editar usuário", HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (Exception e) {
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping(value ="/deletar", produces = "application/json; charset=utf-8")
+    public ResponseEntity<String> deletarUsuario(@RequestHeader("usuario_id") int usuarioId){
+        int delete = usuarioRepository.deletarPorId(usuarioId);
+        if(delete != 1){
+            return new ResponseEntity<>("Erro ao Deletar Usuário", HttpStatus.INTERNAL_SERVER_ERROR);
+        }else {
+            return new ResponseEntity<>("Sucesso", HttpStatus.OK);
         }
     }
 

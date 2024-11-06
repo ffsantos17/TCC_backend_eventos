@@ -19,6 +19,7 @@ public interface UsuarioRepository {
     int deletarPorId(int id);
 
     List<Usuario> buscarTodos();
+    List<Usuario> buscarPorTipo(int tipo);
 
     Usuario buscarPorEmail(String email);
 
@@ -27,7 +28,7 @@ public interface UsuarioRepository {
     List<EventosUsuario> buscarEventosUsuarios(int idUsuario);
     EventosUsuario buscarEventoUsuario(int idEventoUsuario, int usuarioId);
     List<DocumentoUsuario> buscarDocumentosUsuarios(int idEventoUsuario);
-    int inscreverEvento(int eventoId, int usuarioId);
+    int inscreverEvento(int eventoId, int usuarioId, int tipoInscricao, int statusInscricao);
 
 
 }

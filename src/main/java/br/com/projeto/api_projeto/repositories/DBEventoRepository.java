@@ -57,9 +57,11 @@ public class DBEventoRepository  implements EventoRepository{
 
         int linhaInserida = keyHolder.getKey().intValue();
 
-        documentos.forEach(e ->{
-            jdbcTemplate.update("INSERT INTO `evento_r_documento`(`evento_id`, `documento_id`) VALUES (?,?)", linhaInserida, e);
-        });
+        if(documentos.size() > 0){
+            documentos.forEach(e ->{
+                jdbcTemplate.update("INSERT INTO `evento_r_documento`(`evento_id`, `documento_id`) VALUES (?,?)", linhaInserida, e);
+            });
+        }
 
         return linhaInserida;
 //        return jdbcTemplate.update("INSERT INTO `evento`(`evento_link`, `evento_data`, `evento_dataFim`, `evento_data_criacao`, `evento_id_usuario_criacao`, `evento_linkepublico`, `evento_nome`, `evento_vagas`, `evento_imagem`, `evento_descricao`, `evento_local`) VALUES (?,?,?,NOW(),?,?,?,?,?,?,?)",
@@ -91,7 +93,7 @@ public class DBEventoRepository  implements EventoRepository{
 
     @Override
     public List<Evento> buscarTodos() {
-        return jdbcTemplate.query("SELECT evento.evento_id as id, evento_link as link, evento_data as data, evento_DataFim as dataFim, evento_data_criacao as dataCriacao, evento_id_usuario_criacao as idUsuarioCriacao, evento_linkepublico as linkEPublico, evento_nome as nome, evento_vagas as vagas, evento_imagem as imagem, evento_descricao as descricao, evento_visitas as visitas, evento_local as local, (evento.evento_vagas-COUNT(inscricoes.evento_r_usuario_id)) as vagasDisponiveis from evento LEFT JOIN evento_r_usuario AS inscricoes ON evento.evento_id=inscricoes.evento_id AND inscricoes.lista_item_tipoInscricao_id = 3 AND inscricoes.lista_item_statusInscricao_id NOT IN (6) where evento_data > NOW() GROUP BY evento.evento_id, evento_link, evento_data, evento_data_criacao, evento_id_usuario_criacao, evento_linkepublico, evento_nome, evento_vagas, evento_imagem ORDER BY evento_data ASC;", BeanPropertyRowMapper.newInstance(Evento.class));
+        return jdbcTemplate.query("SELECT evento.evento_id as id, evento_link as link, evento_data as data, evento_DataFim as dataFim, evento_data_criacao as dataCriacao, evento_id_usuario_criacao as idUsuarioCriacao, evento_linkepublico as linkEPublico, evento_nome as nome, evento_vagas as vagas, evento_imagem as imagem, evento_descricao as descricao, evento_visitas as visitas, evento_local as local, (evento.evento_vagas-COUNT(inscricoes.evento_r_usuario_id)) as vagasDisponiveis from evento LEFT JOIN evento_r_usuario AS inscricoes ON evento.evento_id=inscricoes.evento_id AND inscricoes.lista_item_tipoInscricao_id = 3 AND inscricoes.lista_item_statusInscricao_id NOT IN (6) where evento_data >= NOW() GROUP BY evento.evento_id, evento_link, evento_data, evento_data_criacao, evento_id_usuario_criacao, evento_linkepublico, evento_nome, evento_vagas, evento_imagem ORDER BY evento_data ASC;", BeanPropertyRowMapper.newInstance(Evento.class));
 
     }
 
