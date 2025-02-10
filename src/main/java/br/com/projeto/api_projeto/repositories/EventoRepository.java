@@ -12,7 +12,7 @@ import java.util.List;
 public interface EventoRepository{
     int salvar(Evento evento, ArrayList<String> documentos);
 
-    int atualizar(Evento evento);
+    int atualizar(Evento evento, ArrayList<String> documentos);
 
     Evento buscarPorId(int id);
 

@@ -40,12 +40,7 @@ public class EventoController {
     @GetMapping(value = "/listar", produces = "application/json; charset=utf-8" )
     public ResponseEntity<List<Evento>> listarEventos() {
         try {
-            List<Evento> eventos = new ArrayList<Evento>();
-
-//            if (title == null)
-                eventoRepository.buscarTodos().forEach(eventos::add);
-//            else
-//                eventoRepository.findByTitleContaining(title).forEach(eventos::add);
+            List<Evento> eventos = new ArrayList<Evento>(eventoRepository.buscarTodos());
             eventos.forEach(e ->{
                 e.setDocumentos(eventoRepository.buscarDocumentoEvento(e.getId()));
             });
@@ -84,20 +79,44 @@ public class EventoController {
     }
 
     @PutMapping(value = "/atualizar/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<String> atualizarEvento(@PathVariable("id") int id, @RequestBody Evento evento){
+    public ResponseEntity<String> atualizarEvento(@PathVariable("id") int id, @RequestParam MultipartFile file, @RequestHeader("json") String json, @RequestHeader("documentos") String documentos){
 
-        Evento _evento = eventoRepository.buscarPorId(id);
-        if (_evento != null) {
-            _evento.setId(id);
-            _evento.setNome(evento.getNome());
-            _evento.setLink(evento.getLink());
-            _evento.setVagas(evento.getVagas());
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            objectMapper.disable(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE);
 
-            eventoRepository.atualizar(_evento);
+            Evento evento = objectMapper.readValue(json, Evento.class);
+            Evento _evento = eventoRepository.buscarPorId(id);
+            evento.setId(id);
+
+            ArrayList<String> arrayList;
+            documentos = documentos.replace("[", "").replace("]", "").trim();
+            if (documentos.isEmpty()) {
+                arrayList = new ArrayList<String>();
+            }else {
+                String[] splits = documentos.split(",");
+                arrayList = new ArrayList<>(Arrays.asList(splits));
+            }
+            eventoRepository.atualizar(evento, arrayList);
+            if(!evento.getImagem().equals(_evento.getImagem())) {
+                fileServiceImpl.upload(file, "uploads/imagens");
+            }
             return new ResponseEntity<>("Evento atualizado.", HttpStatus.OK);
-        } else {
+        } catch (Exception e) {
             return new ResponseEntity<>("Não foi possivel editar o evento id=" + id, HttpStatus.NOT_FOUND);
         }
+//        Evento _evento = eventoRepository.buscarPorId(id);
+//        if (_evento != null) {
+//            _evento.setId(id);
+//            _evento.setNome(evento.getNome());
+//            _evento.setLink(evento.getLink());
+//            _evento.setVagas(evento.getVagas());
+//
+//            eventoRepository.atualizar(_evento);
+//            return new ResponseEntity<>("Evento atualizado.", HttpStatus.OK);
+//        } else {
+//            return new ResponseEntity<>("Não foi possivel editar o evento id=" + id, HttpStatus.NOT_FOUND);
+//        }
     }
 
     @DeleteMapping(value = "/deletar/{id}", produces = MediaType.APPLICATION_JSON_VALUE)

@@ -28,7 +28,6 @@ public class UsuarioController {
 
     @PostMapping(value ="/buscar", produces = "application/json; charset=utf-8" )
     public ResponseEntity<Usuario> buscar(@RequestBody Usuario userInfo){
-        System.out.println(userInfo.getEmail());
         Usuario user = usuarioRepository.buscarPorEmail(userInfo.getEmail());
         user.setEventos(usuarioRepository.buscarEventosUsuarios(user.getId()));
         return new ResponseEntity<>(user, HttpStatus.OK);
@@ -40,7 +39,6 @@ public class UsuarioController {
             List<Usuario> usuarios = new ArrayList<Usuario>();
 
             usuarioRepository.buscarTodos().forEach(usuarios::add);
-            usuarios.forEach(user -> System.out.println(user.getEmail()));
             if (usuarios.isEmpty()) {
                 return new ResponseEntity<>(HttpStatus.NO_CONTENT);
             }
@@ -56,7 +54,6 @@ public class UsuarioController {
             List<Usuario> usuarios = new ArrayList<Usuario>();
 
             usuarioRepository.buscarPorTipo(tipoUsuario_Id).forEach(usuarios::add);
-            usuarios.forEach(user -> System.out.println(user.getEmail()));
             if (usuarios.isEmpty()) {
                 return new ResponseEntity<>(HttpStatus.NO_CONTENT);
             }

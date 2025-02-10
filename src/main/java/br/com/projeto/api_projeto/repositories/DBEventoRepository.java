@@ -69,9 +69,21 @@ public class DBEventoRepository  implements EventoRepository{
     }
 
     @Override
-    public int atualizar(Evento evento) {
-        return jdbcTemplate.update("UPDATE evento SET evento_link=?,evento_data=?,evento_linkepublico=?,evento_nome=?,evento_vagas=? WHERE evento_Id=?",
-                new Object[] {evento.getLink(), evento.getData(), evento.isLinkEPublico(), evento.getNome(), evento.getVagas(), evento.getId() });
+    public int atualizar(Evento evento, ArrayList<String> documentos) {
+        try {
+            jdbcTemplate.update("UPDATE evento SET evento_link=?,evento_data=?,evento_dataFim=?,evento_linkepublico=?,evento_nome=?,evento_vagas=?,evento_imagem=?,evento_descricao=?,evento_local=? WHERE evento_id=?",
+                    new Object[]{evento.getLink(), evento.getData(), evento.getDataFim(), evento.isLinkEPublico(), evento.getNome(), evento.getVagas(), evento.getImagem(), evento.getDescricao(), evento.getLocal(), evento.getId()});
+
+            if (!documentos.isEmpty()) {
+                documentos.forEach(e -> {
+                    jdbcTemplate.update("INSERT INTO evento_r_documento(evento_id, documento_id) SELECT ?, ? FROM dual WHERE NOT EXISTS ( SELECT 1 FROM evento_r_documento WHERE evento_id = ? AND documento_id = ?);", evento.getId(), e, evento.getId(), e);
+                });
+            }
+            return 1;
+        }catch (Exception e){
+            return 0;
+        }
+
     }
 
     @Override

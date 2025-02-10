@@ -54,6 +54,7 @@ public class SecurityConfigurations {
                         .requestMatchers(HttpMethod.POST, "/usuario/buscar-evento-usuario").permitAll()
                         .requestMatchers(HttpMethod.POST, "/alerta/listar").permitAll()
                         .requestMatchers(HttpMethod.POST, "/alerta/criar").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/eventos/atualizar").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.POST, "/eventos/cadastrar").hasRole("ADMIN").anyRequest().authenticated()
                 )
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
