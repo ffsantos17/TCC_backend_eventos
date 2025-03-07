@@ -1,7 +1,6 @@
 package br.com.projeto.api_projeto.controller;
 
 import br.com.projeto.api_projeto.models.Documento;
-import br.com.projeto.api_projeto.models.DocumentoUsuario;
 import br.com.projeto.api_projeto.repositories.DocumentoRepository;
 import br.com.projeto.api_projeto.services.FileServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,16 +41,12 @@ public class DocumentoController {
         if (file != null && !file.isEmpty()) {
             documento.setModelo(file.getOriginalFilename());
         } else {
-            documento.setModelo(null); // Ou defina como achar melhor
+            documento.setModelo(null);
         }
-//        documento.setModelo(file.getOriginalFilename());
         int result = documentoRepository.criar(documento);
         if(result == 1){
             if (file != null && !file.isEmpty()) {
                 boolean up = fileServiceImpl.upload(file, "uploads/modelos");
-//                if (up) {
-//                    return new ResponseEntity<>("Documento criado com sucesso", HttpStatus.OK);
-//                }
             }
             return new ResponseEntity<>("Documento criado com sucesso", HttpStatus.OK);
         }
@@ -148,40 +143,4 @@ public class DocumentoController {
         boolean response =  documentoRepository.visualizarDocumento(idDocumentoUsuario);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
-//
-//    @PostMapping(value = "/add", consumes = MediaType.APPLICATION_JSON_VALUE)
-//    public Documento cadastrarDocumento(@RequestBody Documento documento){
-//        Documento addDocumento = new Documento();
-//
-//        addDocumento.setNome(documento.getNome());
-//        addDocumento.setPossuiModelo(documento.isPossuiModelo());
-//        addDocumento.setModelo(documento.getModelo());
-//        addDocumento.setDataCriacao(new Date());
-//        addDocumento.setExcluido(false);
-//
-//        return documentoRepository.save(addDocumento);
-//    }
-//
-//    @PutMapping(value = "/att", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-//    public Documento atualizarDocumento(@RequestBody Documento documento){
-//            Documento getDocumento = documentoRepository.findById((long) documento.getId()).orElseThrow();
-//
-//            Documento updateDoc = new Documento();
-//
-//            updateDoc.setId(documento.getId());
-//            updateDoc.setNome(documento.getNome());
-//            updateDoc.setPossuiModelo(documento.isPossuiModelo());
-//            updateDoc.setModelo(documento.getModelo());
-//            updateDoc.setDataCriacao(documento.getDataCriacao());
-//            updateDoc.setExcluido(documento.isExcluido());
-//
-//            return documentoRepository.save(updateDoc);
-//    }
-//
-//    @DeleteMapping(value = "/delete/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-//    public Documento deletarDocumento(@PathVariable Long id){
-//        Documento getDocumento = documentoRepository.findById(id).orElseThrow();
-//        documentoRepository.delete(getDocumento);
-//        return  getDocumento;
-//    }
 }

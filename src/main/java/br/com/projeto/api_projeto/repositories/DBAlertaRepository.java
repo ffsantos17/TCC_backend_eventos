@@ -33,7 +33,7 @@ public class DBAlertaRepository implements AlertaRepository {
                     "LEFT JOIN usuario ON usuario.usuario_id=alerta.alerta_usuarioCriacao_id\n" +
                     "LEFT JOIN lista_item ON alerta.lista_item_tipoAlerta_id=lista_item.lista_item_id AND lista_item.lista_id=3\n" +
                     "WHERE alerta_tabelaRegistro_id=? AND alerta_tabela=?\n" +
-                    "ORDER BY `alerta_dataCriacao` DESC;", BeanPropertyRowMapper.newInstance(Alerta.class), registroId, tabela);
+                    "ORDER BY alerta_dataCriacao DESC;", BeanPropertyRowMapper.newInstance(Alerta.class), registroId, tabela);
             return alertas;
         }catch (IncorrectResultSizeDataAccessException e){
             return null;
@@ -42,20 +42,20 @@ public class DBAlertaRepository implements AlertaRepository {
 
     @Override
     public int criar(Alerta alerta, int registro_id, String tabela) {
-        return jdbcTemplate.update("INSERT INTO `alerta`(`lista_item_tipoAlerta_id`,\n" +
-                                        "`alerta_descricao`, \n" +
-                                        "`alerta_usuarioCriacao_id`, \n" +
-                                        "`alerta_dataCriacao`, \n" +
-                                        "`alerta_tabela`, \n" +
-                                        "`alerta_tabelaRegistro_id`,\n" +
-                                        "`alerta_lido`) \n" +
+        return jdbcTemplate.update("INSERT INTO alerta(lista_item_tipoAlerta_id,\n" +
+                                        "alerta_descricao, \n" +
+                                        "alerta_usuarioCriacao_id, \n" +
+                                        "alerta_dataCriacao, \n" +
+                                        "alerta_tabela, \n" +
+                                        "alerta_tabelaRegistro_id,\n" +
+                                        "alerta_lido) \n" +
                                         "VALUES (?,?,?,NOW(),?,?,false)",
                 alerta.getTipoAlerta_id(), alerta.getDescricao(), alerta.getUsuarioCriacao_id(), tabela, registro_id);
     }
 
     @Override
     public int lerAlerta(int alerta_id) {
-        return jdbcTemplate.update("UPDATE `alerta` SET `alerta_lido`=1 WHERE `alerta_id`=?",
+        return jdbcTemplate.update("UPDATE alerta SET alerta_lido=1 WHERE alerta_id=?",
                 alerta_id);
     }
 }

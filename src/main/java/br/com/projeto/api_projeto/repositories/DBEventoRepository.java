@@ -2,10 +2,8 @@ package br.com.projeto.api_projeto.repositories;
 
 import br.com.projeto.api_projeto.models.DocumentosEvento;
 import br.com.projeto.api_projeto.models.Evento;
-import br.com.projeto.api_projeto.models.EventosUsuario;
 import br.com.projeto.api_projeto.models.ParticipanteEvento;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -13,7 +11,6 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
-import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.Statement;
 import java.text.SimpleDateFormat;
@@ -36,7 +33,7 @@ public class DBEventoRepository  implements EventoRepository{
 
     @Override
     public int salvar(Evento evento, ArrayList<String> documentos) {
-        String SQL = "INSERT INTO `evento`(`evento_link`, `evento_data`, `evento_dataFim`, `evento_data_criacao`, `evento_id_usuario_criacao`, `evento_linkepublico`, `evento_nome`, `evento_vagas`, `evento_imagem`, `evento_descricao`, `evento_local`) VALUES (?,?,?,NOW(),?,?,?,?,?,?,?)";
+        String SQL = "INSERT INTO evento(evento_link, evento_data, evento_dataFim, evento_data_criacao, evento_id_usuario_criacao, evento_linkepublico, evento_nome, evento_vagas, evento_imagem, evento_descricao, evento_local) VALUES (?,?,?,NOW(),?,?,?,?,?,?,?)";
         KeyHolder keyHolder = new GeneratedKeyHolder();
         jdbcTemplate.update(connection -> {
             PreparedStatement ps = connection.prepareStatement(SQL,
@@ -59,13 +56,11 @@ public class DBEventoRepository  implements EventoRepository{
 
         if(documentos.size() > 0){
             documentos.forEach(e ->{
-                jdbcTemplate.update("INSERT INTO `evento_r_documento`(`evento_id`, `documento_id`) VALUES (?,?)", linhaInserida, e);
+                jdbcTemplate.update("INSERT INTO evento_r_documento(evento_id, documento_id) VALUES (?,?)", linhaInserida, e);
             });
         }
 
         return linhaInserida;
-//        return jdbcTemplate.update("INSERT INTO `evento`(`evento_link`, `evento_data`, `evento_dataFim`, `evento_data_criacao`, `evento_id_usuario_criacao`, `evento_linkepublico`, `evento_nome`, `evento_vagas`, `evento_imagem`, `evento_descricao`, `evento_local`) VALUES (?,?,?,NOW(),?,?,?,?,?,?,?)",
-//                new Object[] { evento.getData(), evento.getLink(), evento.getDataCriacao(), evento.getIdUsuarioCriacao(), evento.isLinkEPublico(), evento.getNome(), evento.getVagas() });
     }
 
     @Override
@@ -111,7 +106,7 @@ public class DBEventoRepository  implements EventoRepository{
 
     @Override
     public int alterarStatusInscricao(int id, int status_id){
-        return jdbcTemplate.update("UPDATE `evento_r_usuario` SET `lista_item_statusInscricao_id`=? WHERE evento_r_usuario_id=?", status_id, id);
+        return jdbcTemplate.update("UPDATE evento_r_usuario SET lista_item_statusInscricao_id=? WHERE evento_r_usuario_id=?", status_id, id);
     }
 
     @Override

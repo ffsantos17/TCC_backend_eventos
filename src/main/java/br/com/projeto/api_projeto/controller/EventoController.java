@@ -67,8 +67,6 @@ public class EventoController {
                 String[] splits = documentos.split(",");
                 arrayList = new ArrayList<>(Arrays.asList(splits));
             }
-//            String[] splits =  documentos.replace("[","").replace("]","").split(",");
-//            ArrayList<String> arrayList = new ArrayList<>(Arrays.asList(splits));
             int linhaInserida = eventoRepository.salvar(evento, arrayList);
             usuarioRepository.inscreverEvento(linhaInserida, evento.getIdUsuarioCriacao(), 1, 4);
             fileServiceImpl.upload(file, "uploads/imagens");
@@ -105,18 +103,6 @@ public class EventoController {
         } catch (Exception e) {
             return new ResponseEntity<>("Não foi possivel editar o evento id=" + id, HttpStatus.NOT_FOUND);
         }
-//        Evento _evento = eventoRepository.buscarPorId(id);
-//        if (_evento != null) {
-//            _evento.setId(id);
-//            _evento.setNome(evento.getNome());
-//            _evento.setLink(evento.getLink());
-//            _evento.setVagas(evento.getVagas());
-//
-//            eventoRepository.atualizar(_evento);
-//            return new ResponseEntity<>("Evento atualizado.", HttpStatus.OK);
-//        } else {
-//            return new ResponseEntity<>("Não foi possivel editar o evento id=" + id, HttpStatus.NOT_FOUND);
-//        }
     }
 
     @DeleteMapping(value = "/deletar/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -141,7 +127,6 @@ public class EventoController {
     @GetMapping("/buscar")
     public ResponseEntity<Evento> buscarPorId(@RequestHeader("id") int id){
         Evento evento = eventoRepository.buscarPorId(id);
-//        evento.setDocumentos(eventoRepository.buscarDocumentoEvento(evento.getId()));
         return new ResponseEntity<>(evento, HttpStatus.OK);
     }
 

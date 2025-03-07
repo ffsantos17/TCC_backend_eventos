@@ -65,10 +65,8 @@ public class AuthController {
     @PostMapping(value = "/obter-usuario", produces = "application/json; charset=utf-8" )
     public ResponseEntity<Usuario> getUser(@RequestHeader("Authorization") String bearerToken){
         if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
-            String jwtToken = bearerToken.substring(7); // Remove "Bearer " do token
-            String username = tokenService.validateToken(jwtToken); // Extrair o nome de usuário do token
-            // Aqui você pode acessar seu serviço ou banco de dados para obter informações do usuário
-            // Exemplo simples apenas retornando o nome de usuário
+            String jwtToken = bearerToken.substring(7);
+            String username = tokenService.validateToken(jwtToken);
             Usuario userDetails = usuarioRepository.buscarPorEmail(username);
             userDetails.setEventos(usuarioRepository.buscarEventosUsuarios(userDetails.getId()));
             return ResponseEntity.ok(userDetails);
