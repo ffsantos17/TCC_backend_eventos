@@ -18,7 +18,7 @@ Este repositório contém o código-fonte do back-end do sistema gerenciador de 
 ### Passos para Execução
 1. Clone este repositório:
    ```bash
-   git clone https://github.com/seu-usuario/backend-eventos.git
+   git clone https://github.com/ffsantos17/TCC_backend_eventos.git
 2 . Navegue até a pasta do projeto:
     ```bash
     cd backend-eventos
